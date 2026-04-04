@@ -1,6 +1,6 @@
-# 🚀 Dashboard ACG - DASH-API v1 (PHP 8.4+)
+# 🚀 DASH-API v1 (PHP 8.4+)
 
-Bienvenido a la documentación oficial de la API de Dashboard ACG. Esta es una API REST dinámica, profesional y altamente segura, protegida por **JWT (JSON Web Tokens)**, con auditoría en tiempo real y 100% compatible con **PHP 8.4**.
+Bienvenido a la documentación oficial de la API de DASH API. Esta es una API REST dinámica, profesional y altamente segura, protegida por **JWT (JSON Web Tokens)**, con auditoría en tiempo real y 100% compatible con **PHP 8.4**.
 
 ---
 
@@ -101,4 +101,4 @@ Accede a [swagger.html](file:///var/www/html/api/swagger.html) para probar los e
 > **Seguridad Crítica**: Nunca compartas tu `JWT_SECRET`. Si sospechas que ha sido comprometido, cámbialo en el `.env` y todos los tokens antiguos quedarán invalidados inmediatamente.
 
 ---
-© 2026 Dashboard ACG - Powered by César Rojas
+DASH API - Powered by César Rojas Basado en PHP CRUD API de Maurits van der Schee: maurits@vdschee.nl

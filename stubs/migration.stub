@@ -1,0 +1,25 @@
+<?php
+
+use App\Core\Blueprint;
+
+class {{className}} {
+    public string $table = '{{tableName}}';
+    public string $route = '/api/v1/{{tableName}}';
+    public bool $auth  = {{authBoolean}};
+    public array $search = [{{searchFields}}]; // Parametros exactos para GET (ej. ['email', 'status'])
+
+    public function up(Blueprint $table): void {
+        $table->id();
+        $table->uuid('uuid')->unique();
+
+        // --- Campos generados dinámicamente ---
+{{migrationFields}}
+
+        $table->timestamps();
+        $table->softDeletes();
+    }
+
+    public function down(Blueprint $table): void {
+        $table->dropTable();
+    }
+};

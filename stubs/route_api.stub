@@ -1,0 +1,10 @@
+<?php
+/** @var \Bramus\Router\Router $router */
+$router->mount('/{{cleanRoute}}', function() use ($router) {
+{{authMiddleware}}
+    $router->get('/', 'Api\{{className}}Controller@index');
+    $router->get('/([^/]+)', 'Api\{{className}}Controller@show');
+    $router->post('/', 'Api\{{className}}Controller@store');
+    $router->put('/([^/]+)', 'Api\{{className}}Controller@update');
+    $router->delete('/([^/]+)', 'Api\{{className}}Controller@delete');
+});

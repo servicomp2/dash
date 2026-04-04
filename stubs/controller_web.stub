@@ -1,0 +1,83 @@
+<?php
+declare(strict_types=1);
+
+namespace App\Controllers\Web;
+
+use App\Core\View;
+
+class {{className}}Controller {
+
+    private int $perPage = 20;
+
+    public function index(): void {
+        global $db;
+        $page   = max(1, (int)($_GET['page'] ?? 1));
+        $q      = trim($_GET['q'] ?? '');
+        $where  = ['deleted_at' => null];
+
+        // Search across all text-like columns if query param present
+        if ($q !== '') {
+            $where['OR'] = {{searchWhereOr}};
+        }
+
+        $total   = $db->count('{{tableName}}', $where) ?: 0;
+        $offset  = ($page - 1) * $this->perPage;
+        $records = $db->select('{{tableName}}', '*', array_merge($where, ['LIMIT' => [$offset, $this->perPage]]));
+        $pages   = max(1, (int)ceil($total / $this->perPage));
+
+        View::render('{{tableName}}/index', [
+            'records' => $records ?: [],
+            'total'   => $total,
+            'page'    => $page,
+            'pages'   => $pages,
+            'q'       => $q,
+        ]);
+    }
+
+    public function create(): void {
+        {{createContextBlock}}
+        View::render('{{tableName}}/create', {{createContextVar}});
+    }
+
+    public function store(): void {
+        global $db;
+        $input = $_POST;
+        // Strip internal/system keys from POST
+        unset($input['_token']);
+{{autoFields}}
+        $db->insert('{{tableName}}', $input);
+
+        header('Location: /admin/{{tableName}}?success=created');
+        exit;
+    }
+
+    public function edit(int $id): void {
+        global $db;
+        $record = $db->get('{{tableName}}', '*', ['id' => $id, 'deleted_at' => null]);
+        if (!$record) {
+            header('Location: /admin/{{tableName}}');
+            exit;
+        }
+        {{editContextBlock}}
+        View::render('{{tableName}}/edit', array_merge(['record' => $record], {{editContextVar}}));
+    }
+
+    public function update(int $id): void {
+        global $db;
+        $input = $_POST;
+        unset($input['_token']);
+{{autoFields}}
+        $db->update('{{tableName}}', $input, ['id' => $id]);
+
+        header('Location: /admin/{{tableName}}?success=updated');
+        exit;
+    }
+
+    public function delete(int $id): void {
+        global $db;
+        $db->update('{{tableName}}', ['deleted_at' => date('Y-m-d H:i:s')], ['id' => $id]);
+
+        header('Location: /admin/{{tableName}}?success=deleted');
+        exit;
+    }
+}

@@ -1,0 +1,27 @@
+<?php
+
+use App\Core\Blueprint;
+
+class {{className}} {
+    public string $table = '{{tableName}}';
+    public string $route = '/api/v1/{{tableName}}';
+    public bool $auth  = true;
+    public array $search = []; // Actualiza esto para los nuevos filtros de Swagger
+
+    /**
+     * Define las modificaciones de la tabla usando la API fluida.
+     */
+    public function up(Blueprint $table): void {
+        $table->alter(); // Activa el modo edición
+
+        // Ejemplos de uso (descomenta lo que necesites):
+        // $table->string('new_column')->nullable()->after('id');
+        // $table->dropColumn('old_column');
+        // $table->renameColumn('from_name', 'to_name');
+        // $table->foreign('category_id', 'categories');
+    }
+
+    public function down(Blueprint $table): void {
+        // Se recomienda manejar la reversión manual de cambios aquí.
+    }
+};

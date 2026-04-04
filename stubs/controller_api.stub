@@ -1,0 +1,153 @@
+<?php
+declare(strict_types=1);
+
+namespace App\Controllers\Api;
+
+use OpenApi\Attributes as OA;
+
+class {{className}}Controller {
+
+    #[OA\Get(
+        path: "/api/v1/{{tableName}}",
+        summary: "Obtener lista de {{tableName}}",
+        tags: ["{{className}}"],
+        security: [["bearerAuth" => []]],
+        parameters: [
+            new OA\Parameter(name: "page", in: "query", required: false, schema: new OA\Schema(type: "integer")),
+            new OA\Parameter(name: "limit", in: "query", required: false, schema: new OA\Schema(type: "integer")),
+            new OA\Parameter(name: "q", in: "query", description: "Búsqueda general", required: false, schema: new OA\Schema(type: "string")),
+{{queryParameters}}
+        ],
+        responses: [
+            new OA\Response(response: 200, description: "Exitosa")
+        ]
+    )]
+    public function index(): void {
+        global $db; 
+        $params = $_GET; 
+        $page = isset($params['page']) ? (int)$params['page'] : 1;
+        $limit = isset($params['limit']) ? (int)$params['limit'] : 20;
+        $offset = ($page - 1) * $limit;
+        
+        $where = ['deleted_at' => null];
+        
+        // 1. Filtrado de Búsqueda de Migración (Parámetros específicos)
+        $searchParams = [{{searchParamsList}}];
+        foreach ($searchParams as $param) {
+            if (isset($params[$param]) && $params[$param] !== '') {
+                $where[$param] = $params[$param];
+            }
+        }
+        
+        // 2. Búsqueda General Inteligente (Parámetro 'q')
+        if (isset($params['q']) && trim($params['q']) !== '') {
+            $where['OR'] = [
+{{searchFields}}
+            ];
+        }
+        
+        // 3. Paginación
+        $where['LIMIT'] = [$offset, $limit];
+        
+        $data = $db->select('{{tableName}}', '*', $where);
+        echo json_encode(['data' => $data, 'meta' => ['page' => $page, 'limit' => $limit]]);
+    }
+
+    #[OA\Get(
+        path: "/api/v1/{{tableName}}/{identifier}",
+        summary: "Obtener un(a) {{className}} (por UUID o campos de búsqueda)",
+        tags: ["{{className}}"],
+        security: [["bearerAuth" => []]],
+        parameters: [
+            new OA\Parameter(name: "identifier", in: "path", required: true, description: "UUID de búsqueda u otro campo único exacto", schema: new OA\Schema(type: "string"))
+        ],
+        responses: [
+            new OA\Response(response: 200, description: "Encontrado"),
+            new OA\Response(response: 404, description: "No encontrado")
+        ]
+    )]
+    public function show($identifier): void {
+        global $db;
+        $where = ['deleted_at' => null];
+        $where['OR'] = ['{{pk}}' => $identifier];
+{{showSearchFallbackCode}}
+        $item = $db->get('{{tableName}}', '*', $where);
+        if (!$item) { http_response_code(404); echo json_encode(['error' => 'Not found']); return; }
+        echo json_encode($item);
+    }
+
+    #[OA\Post(
+        path: "/api/v1/{{tableName}}",
+        summary: "Crear un(a) {{className}}",
+        tags: ["{{className}}"],
+        security: [["bearerAuth" => []]],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\MediaType(
+                mediaType: "application/json",
+                schema: new OA\Schema(
+                    type: "object",
+                    properties: [
+{{swaggerProperties}}
+                    ]
+                )
+            )
+        ),
+        responses: [
+            new OA\Response(response: 200, description: "Creado exitosamente")
+        ]
+    )]
+    public function store(): void {
+        global $db;
+        $input = json_decode(file_get_contents('php://input'), true);
+        $input['uuid'] = \App\Utils\Guid::v4();
+{{autoFields}}
+        $db->insert('{{tableName}}', $input);
+        echo json_encode(['status' => 'success', 'uuid' => $input['uuid']]);
+    }
+
+    #[OA\Put(
+        path: "/api/v1/{{tableName}}/{{{pk}}}",
+        summary: "Actualizar un(a) {{className}}",
+        tags: ["{{className}}"],
+        security: [["bearerAuth" => []]],
+        parameters: [
+            new OA\Parameter(name: "{{pk}}", in: "path", required: true, schema: new OA\Schema(type: "{{pkType}}"))
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\MediaType(
+                mediaType: "application/json",
+                schema: new OA\Schema(type: "object")
+            )
+        ),
+        responses: [
+            new OA\Response(response: 200, description: "Actualizado exitosamente")
+        ]
+    )]
+    public function update(${{pk}}): void {
+        global $db;
+        $input = json_decode(file_get_contents('php://input'), true);
+        unset($input['id'], $input['uuid'], $input['created_at']);
+        $db->update('{{tableName}}', $input, ['{{pk}}' => ${{pk}}]);
+        echo json_encode(['status' => 'updated']);
+    }
+
+    #[OA\Delete(
+        path: "/api/v1/{{tableName}}/{{{pk}}}",
+        summary: "Eliminar un(a) {{className}}",
+        tags: ["{{className}}"],
+        security: [["bearerAuth" => []]],
+        parameters: [
+            new OA\Parameter(name: "{{pk}}", in: "path", required: true, schema: new OA\Schema(type: "{{pkType}}"))
+        ],
+        responses: [
+            new OA\Response(response: 200, description: "Eliminado")
+        ]
+    )]
+    public function delete(${{pk}}): void {
+        global $db;
+        $db->update('{{tableName}}', ['deleted_at' => date('Y-m-d H:i:s')], ['{{pk}}' => ${{pk}}]);
+        echo json_encode(['status' => 'deleted']);
+    }
+}

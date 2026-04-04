@@ -9,7 +9,7 @@ Bienvenido a la documentación oficial de la API de DASH API. Esta es una API RE
 Para asegurar el funcionamiento de todas las características avanzadas (como alertas por email), sigue estos pasos:
 
 1.  **Dependencias**: Ejecuta `composer install` en la carpeta raíz de la API para instalar **PHPMailer**.
-2.  **Configuración**: Crea o edita el archivo [`.env`](file:///var/www/html/api/.env) con tus credenciales de base de Datos y SMTP.
+2.  **Configuración**: Crea o edita el archivo [`.env`](/www/html/api/.env) con tus credenciales de base de Datos y SMTP.
 3.  **Base de Datos**: La API generará automáticamente las tablas `login_attempts` y `api_logs` la primera vez que se ejecute.
 
 ---
@@ -25,7 +25,7 @@ La API utiliza un esquema de seguridad de triple capa:
 ### 🔑 Paso 1: Obtener tu Token (Login)
 
 Petición POST al endpoint `/login`:
-**URL:** `http://localhost/api/api.php/login`
+**URL:** `http://tudominio/api/api.php/login`
 
 **Cuerpo (JSON):**
 ```json

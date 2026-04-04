@@ -13171,9 +13171,9 @@ namespace Tqdev\PhpCrudApi {
         'driver' => getenv('DB_DRIVER') ?: 'mysql',
         'address' => getenv('DB_ADDRESS') ?: 'localhost',
         'port' => getenv('DB_PORT') ?: '3306',
-        'username' => getenv('DB_USERNAME') ?: 'root',
-        'password' => getenv('DB_PASSWORD') ?: '16035132',
-        'database' => getenv('DB_DATABASE') ?: 'dashboard_acg',
+        'username' => getenv('DB_USERNAME') ?: 'user',
+        'password' => getenv('DB_PASSWORD') ?: 'password',
+        'database' => getenv('DB_DATABASE') ?: 'database',
         'debug' => true,
         'jsonOptions' => JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES,
         'middlewares' => 'cors,logging,throttling,jwtAuth,dbAuth,softDelete',
@@ -13182,8 +13182,8 @@ namespace Tqdev\PhpCrudApi {
         'dbAuth.passwordColumn' => 'password',
         'dbAuth.usernameFormField' => 'email',
         'dbAuth.passwordFormField' => 'password',
-        'jwtAuth.secret' => getenv('JWT_SECRET') ?: '0d0378ad174d5945eb6f5af81c81dfc9f13e70b0830d7d3838e9275efc74d608',
-        'jwtAuth.issuer' => getenv('JWT_ISSUER') ?: 'DashboardACG-API',
+        'jwtAuth.secret' => getenv('JWT_SECRET') ?: 'your_jwt_secret_key',
+        'jwtAuth.issuer' => getenv('JWT_ISSUER') ?: 'your_app_name',
         'jwtAuth.ttl' => (int)(getenv('JWT_TTL') ?: 3600)
     ]);
     $request = RequestFactory::fromGlobals();

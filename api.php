@@ -13184,7 +13184,8 @@ namespace Tqdev\PhpCrudApi {
         'dbAuth.passwordFormField' => 'password',
         'jwtAuth.secret' => getenv('JWT_SECRET') ?: 'your_jwt_secret_key',
         'jwtAuth.issuer' => getenv('JWT_ISSUER') ?: 'your_app_name',
-        'jwtAuth.ttl' => (int)(getenv('JWT_TTL') ?: 3600)
+        'jwtAuth.ttl' => (int)(getenv('JWT_TTL') ?: 3600),
+        'openApiBase' => '{"info":{"title":"DASH API","version":"1.1.0"}}'
     ]);
     $request = RequestFactory::fromGlobals();
     $api = new Api($config);

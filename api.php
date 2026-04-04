@@ -13167,6 +13167,14 @@ namespace Tqdev\PhpCrudApi {
     use Tqdev\PhpCrudApi\RequestFactory;
     use Tqdev\PhpCrudApi\ResponseUtils;
 
+    $appEnv = getenv('APP_ENV') ?: 'production';
+    $enableOpenApi = ($appEnv === 'development' || getenv('ENABLE_OPENAPI') === 'true');
+
+    $controllers = 'records,status';
+    if ($enableOpenApi) {
+        $controllers .= ',openapi';
+    }
+
     $config = new Config([
         'driver' => getenv('DB_DRIVER') ?: 'mysql',
         'address' => getenv('DB_ADDRESS') ?: 'localhost',
@@ -13174,7 +13182,8 @@ namespace Tqdev\PhpCrudApi {
         'username' => getenv('DB_USERNAME') ?: 'user',
         'password' => getenv('DB_PASSWORD') ?: 'password',
         'database' => getenv('DB_DATABASE') ?: 'database',
-        'debug' => true,
+        'debug' => ($appEnv === 'development'),
+        'controllers' => $controllers,
         'jsonOptions' => JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES,
         'middlewares' => 'cors,logging,throttling,jwtAuth,dbAuth,softDelete',
         'dbAuth.usersTable' => 'users',

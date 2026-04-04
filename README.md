@@ -61,6 +61,12 @@ Cada cambio en la base de Datos (CRUD) se registra doblemente:
 ### ⚙️ Configuración Dinámica (.env)
 Ya no hay datos sensibles "hardcodeados" en el código. Toda la configuración se gestiona desde el archivo [`.env`](file:///var/www/html/api/.env).
 
+### 🌐 Control de Entornos (Producción vs Desarrollo)
+Puedes controlar la visibilidad de la documentación y el modo depuración desde el archivo `.env`:
+-   **Desarrollo**: Usa `APP_ENV=development` para habilitar Swagger, OpenAPI y mensajes de error detallados.
+-   **Producción**: Usa `APP_ENV=production` para deshabilitar automáticamente Swagger/OpenAPI y ocultar errores internos.
+-   **Override**: Puedes forzar la activación de la documentación en cualquier entorno con `ENABLE_OPENAPI=true`.
+
 ---
 
 ## 🚀 Uso de la API (Recursos Dinámicos)
